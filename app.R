@@ -59,19 +59,25 @@ ui <- fluidPage(
                conditionalPanel(condition = "input.Scen1 == true",
                                 sliderInput("slider1", NULL,  min = 0, max = 100, value = 26, step  =  1, width = "170px", ticks = TRUE)),
                
+               #textOutput("slide1out"),
+               
                #__________________
                
                checkboxInput("Scen2", "Avg. highest 5 catch 2005-19", TRUE),
                
                conditionalPanel(condition = "input.Scen2 == true",
                                 sliderInput("slider2", NULL,  min = 0, max = 100, value = 16, step  =  1, width = "170px", ticks = TRUE)),
-              
+               
+               #textOutput("slide2out"),
+               
                #__________________
                
                checkboxInput("Scen3", "Interim TKA limits", TRUE),
                
                conditionalPanel(condition = "input.Scen3 == true",
                                 sliderInput("slider3", NULL,  min = 0, max = 100, value = 14, step = 1, width = "170px", ticks = TRUE)),
+               
+               #textOutput("slide3out"),
                
                #__________________
                
@@ -80,6 +86,8 @@ ui <- fluidPage(
                conditionalPanel(condition = "input.Scen4 == true",
                                 sliderInput("slider4", NULL,  min = 0, max = 100, value = 18, step = 1, width = "170px", ticks = TRUE)),
                
+               #textOutput("slide4out"),
+               
                #__________________
                
                checkboxInput("Scen5", "Index of fisheries dependence", TRUE),
@@ -87,8 +95,31 @@ ui <- fluidPage(
                conditionalPanel(condition = "input.Scen5 == true",
                                 sliderInput("slider5", NULL,  min = 0, max = 100, value = 26, step = 1, width = "170px", ticks = TRUE))
                
+               # 
+               # conditionalPanel(condition = "input.Scen5 == true",
+               #                  textOutput("slide5out"))
+               
+               
+               
                #__________________          
 
+               
+        ),
+        
+        column(1, 
+               br(),br(),br(),br(),
+               h3("Weighting (%'s)"),
+               br(),br(),
+               h2(htmlOutput("slide1out")),
+               br(),br(),
+               h2(htmlOutput("slide2out")),
+               br(),br(),
+               h2(htmlOutput("slide3out")),
+               br(),br(),
+               h2(htmlOutput("slide4out")),
+               br(),br(),
+               h2(htmlOutput("slide5out")),
+               br()
                
         ),
         
@@ -124,7 +155,7 @@ ui <- fluidPage(
           
         ),
         
-        column(5,  plotlyOutput("IndPlot")),
+        column(4,  plotlyOutput("IndPlot")),
         #column(1, br()),
         column(2, br(), br(), dataTableOutput("AllocTab"))
         
@@ -143,24 +174,74 @@ ui <- fluidPage(
 
 server <- function(input, output) {
     
+  
     wgtVec <- reactive({
         paste(c(ifelse(input$Scen1 == TRUE, input$slider1, 0), ifelse(input$Scen2 == TRUE, input$slider2, 0), ifelse(input$Scen3 == TRUE, input$slider3, 0),
                 ifelse(input$Scen4 == TRUE, input$slider4, 0), ifelse(input$Scen5 == TRUE, input$slider5, 0)))
     })
+    
+    output$slide1out <- renderText({ 
+      
+      tmp.wgt <- as.numeric(wgtVec())
+      
+      tmp.wgt <- tmp.wgt/sum(tmp.wgt)
+      
+      paste(round(tmp.wgt[1]*100,1), "%")
+    })
+    
+    output$slide2out <- renderText({ 
+      
+      tmp.wgt <- as.numeric(wgtVec())
+      
+      tmp.wgt <- tmp.wgt/sum(tmp.wgt)
+      
+      paste(round(tmp.wgt[2]*100,1), "%")
+    })
+    
+    output$slide3out <- renderText({ 
+      
+      tmp.wgt <- as.numeric(wgtVec())
+      
+      tmp.wgt <- tmp.wgt/sum(tmp.wgt)
+      
+      paste(round(tmp.wgt[3]*100,1), "%")
+    })
 
     
-    datuse <- reactive({
-
-        if(input$datswitch == 1){
-
-            dat <- dat_l
-
-        } else {
-
-            dat <- dat_t
-
-        }
+    output$slide4out <- renderText({ 
+      
+      tmp.wgt <- as.numeric(wgtVec())
+      
+      tmp.wgt <- tmp.wgt/sum(tmp.wgt)
+      
+      paste(round(tmp.wgt[4]*100,1), "%")
     })
+    
+    output$slide5out <- renderText({ 
+      
+      tmp.wgt <- as.numeric(wgtVec())
+      
+      tmp.wgt <- tmp.wgt/sum(tmp.wgt)
+      
+      paste(round(tmp.wgt[5]*100,1), "%")
+    })
+    
+    
+    
+    
+    
+    # datuse <- reactive({
+    # 
+    #     if(input$datswitch == 1){
+    # 
+    #         dat <- dat_l
+    # 
+    #     } else {
+    # 
+    #         dat <- dat_t
+    # 
+    #     }
+    # })
 
     
     cattab <- reactive({
@@ -219,9 +300,7 @@ server <- function(input, output) {
             tac = 30025
             
           }
-          
-          
-         }
+        }
       }
 
     })
@@ -253,7 +332,7 @@ server <- function(input, output) {
     output$IndPlot <- renderPlotly({
 
         plot_ly(dattab(), labels = ~Zone, values = ~Percent, type = "pie", marker = list(colors = zone_cols), sort = FALSE,
-                textposition = "inside", textinfo = "label+value", width = 650, height = 650) %>% config(displayModeBar = F) %>%
+                textposition = "inside", textinfo = "label+value", width = 620, height = 620) %>% config(displayModeBar = F) %>%
             layout(title = list(text = "Zone - Allocations (Percentages)", y = 0.99), plot_bgcolor = 'transparent', paper_bgcolor = 'transparent',
                    xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
                    yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE), showlegend = FALSE)
