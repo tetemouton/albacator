@@ -5,9 +5,9 @@ account: smspc-apps
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 5641791
-bundleId: 5573599
+bundleId: 5612539
 url: https://smspc-apps.shinyapps.io/albacator/
-when: 1644722386.67374
-lastSyncTime: 1644722386.67374
+when: 1645681852.95107
+lastSyncTime: 1645681852.95107
 asMultiple: FALSE
 asStatic: FALSE

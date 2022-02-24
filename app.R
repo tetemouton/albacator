@@ -13,15 +13,19 @@ library(shinydashboard)
 library(data.table)
 library(DT)
 
-#setwd("C:/GitHub/WHATapp/WHATapp_web")
 
 theme_set(theme_bw())
 
 zone_cols <- c("dodgerblue2","firebrick3","darkorchid","darkred","lightskyblue","yellow1","orange1","honeydew3","darkgoldenrod3","deeppink3","dodgerblue4","seagreen3","purple4")
 
 dat_l <- read.csv("./Data/DatMat_LL.csv", header = TRUE)
+dat_l_00 <- read.csv("./Data/DatMat_LL_00.csv", header = TRUE)
 
-dat_t <- read.csv("./Data/DatMat_LLTR.csv", header = TRUE)
+#dat_t <- read.csv("./Data/DatMat_LLTR.csv", header = TRUE)
+#dat_t_00 <- read.csv("./Data/DatMat_LLTR_00.csv", header = TRUE)
+
+dat_recent <- read.csv("./Data/Catch_History_Calcs/Catch_Summaries_RecentAvg.csv", header = TRUE)
+
 
 
 #____________________________________________________________________________________________________________
@@ -33,7 +37,7 @@ ui <- fluidPage(
         tags$style(HTML("hr {border-top: 1px solid #000000;}"))
     ),
     
-    titlePanel(title = div(img(height = 120, width = 1500, src = "HeaderBar2.png")), windowTitle = "Let's make albacore great again"),
+    titlePanel(title = div(img(height = 120, width = 1500, src = "HeaderBar1.png")), windowTitle = "MAGA - Make Albacore Great Again"),
     
     setBackgroundColor(
         color = c("white", "white"),
@@ -59,16 +63,12 @@ ui <- fluidPage(
                conditionalPanel(condition = "input.Scen1 == true",
                                 sliderInput("slider1", NULL,  min = 0, max = 100, value = 26, step  =  1, width = "170px", ticks = TRUE)),
                
-               #textOutput("slide1out"),
-               
                #__________________
                
-               checkboxInput("Scen2", "Avg. highest 5 catch 2005-19", TRUE),
+               checkboxInput("Scen2", "Avg. highest 5 catch 200X-19", TRUE),
                
                conditionalPanel(condition = "input.Scen2 == true",
                                 sliderInput("slider2", NULL,  min = 0, max = 100, value = 16, step  =  1, width = "170px", ticks = TRUE)),
-               
-               #textOutput("slide2out"),
                
                #__________________
                
@@ -77,16 +77,12 @@ ui <- fluidPage(
                conditionalPanel(condition = "input.Scen3 == true",
                                 sliderInput("slider3", NULL,  min = 0, max = 100, value = 14, step = 1, width = "170px", ticks = TRUE)),
                
-               #textOutput("slide3out"),
-               
                #__________________
                
                checkboxInput("Scen4", "Estimated biomass in EEZ", TRUE),
                
                conditionalPanel(condition = "input.Scen4 == true",
                                 sliderInput("slider4", NULL,  min = 0, max = 100, value = 18, step = 1, width = "170px", ticks = TRUE)),
-               
-               #textOutput("slide4out"),
                
                #__________________
                
@@ -95,15 +91,8 @@ ui <- fluidPage(
                conditionalPanel(condition = "input.Scen5 == true",
                                 sliderInput("slider5", NULL,  min = 0, max = 100, value = 26, step = 1, width = "170px", ticks = TRUE))
                
-               # 
-               # conditionalPanel(condition = "input.Scen5 == true",
-               #                  textOutput("slide5out"))
-               
-               
-               
                #__________________          
 
-               
         ),
         
         column(1, 
@@ -132,22 +121,19 @@ ui <- fluidPage(
         h5("reference period or a custom value (mt),"),
         h5("and select whether to include troll catch"),
         br(),
-        #br(),
         
-        selectInput("variable", h4("Total bloc:"), # Put the choice between PS and LL here
+        selectInput("variable", h4("Total bloc:"),
                     c("Avg FFA total 2020" = "av20",
                       "Avg FFA total 2019" = "av19",
-                      #"Avg FFA total 2016-20" = "av5Y",
                       "Custom" = "custm"), width = "200px"),
         
         conditionalPanel(condition = "input.variable == 'custm'",
                          numericInput("num1", h4("FFA bloc TAC"), value = 30000, step = 1000, width = "180px")),
         
-        #numericInput("num1", h4("Allocation TAC"), value = 10000, width = "180px"),
         
-        radioButtons("datswitch", label = h4("Gears to include:"),
-                     choices = list("Just longline" = 1, "Longline + troll" = 2), 
-                     selected = 1),
+        radioButtons("timeswitch", label = h4("Average of best years from:"),
+                     choices = list("Early period (e.g. 2001-15)" = 1, "Recent period (e.g. 2005-19)" = 2), 
+                     selected = 2),
         
         br(),
         h3(htmlOutput("TACtext")),
@@ -156,7 +142,6 @@ ui <- fluidPage(
         ),
         
         column(4,  plotlyOutput("IndPlot")),
-        #column(1, br()),
         column(2, br(), br(), dataTableOutput("AllocTab"))
         
     ),
@@ -183,7 +168,6 @@ server <- function(input, output) {
     output$slide1out <- renderText({ 
       
       tmp.wgt <- as.numeric(wgtVec())
-      
       tmp.wgt <- tmp.wgt/sum(tmp.wgt)
       
       paste(round(tmp.wgt[1]*100,1), "%")
@@ -192,7 +176,6 @@ server <- function(input, output) {
     output$slide2out <- renderText({ 
       
       tmp.wgt <- as.numeric(wgtVec())
-      
       tmp.wgt <- tmp.wgt/sum(tmp.wgt)
       
       paste(round(tmp.wgt[2]*100,1), "%")
@@ -201,7 +184,6 @@ server <- function(input, output) {
     output$slide3out <- renderText({ 
       
       tmp.wgt <- as.numeric(wgtVec())
-      
       tmp.wgt <- tmp.wgt/sum(tmp.wgt)
       
       paste(round(tmp.wgt[3]*100,1), "%")
@@ -211,7 +193,6 @@ server <- function(input, output) {
     output$slide4out <- renderText({ 
       
       tmp.wgt <- as.numeric(wgtVec())
-      
       tmp.wgt <- tmp.wgt/sum(tmp.wgt)
       
       paste(round(tmp.wgt[4]*100,1), "%")
@@ -220,41 +201,24 @@ server <- function(input, output) {
     output$slide5out <- renderText({ 
       
       tmp.wgt <- as.numeric(wgtVec())
-      
       tmp.wgt <- tmp.wgt/sum(tmp.wgt)
       
       paste(round(tmp.wgt[5]*100,1), "%")
     })
-    
-    
-    
-    
-    
-    # datuse <- reactive({
-    # 
-    #     if(input$datswitch == 1){
-    # 
-    #         dat <- dat_l
-    # 
-    #     } else {
-    # 
-    #         dat <- dat_t
-    # 
-    #     }
-    # })
 
     
     cattab <- reactive({
+      
+      
+      if(input$timeswitch == "1"){
 
-      if(input$datswitch == "1"){
-
-        dat <- dat_l
-
+          dat <- dat_l_00
+      
       } else {
-
-        dat <- dat_t
-
+          
+          dat <- dat_l
       }
+      
       
       wgt.scalars <- as.numeric(wgtVec())
       
@@ -277,29 +241,12 @@ server <- function(input, output) {
 
         if(input$variable == 'av20'){
           
-          
-          if(input$datswitch == "1"){
-            
             tac = 23584
-            
-          } else {
-            
-            tac = 26443
-            
-          }
           
         } else {
            
-          
-          if(input$datswitch == "1"){
-            
             tac = 28118
             
-          } else {
-            
-            tac = 30025
-            
-          }
         }
       }
 
@@ -313,7 +260,7 @@ server <- function(input, output) {
     
     dattab <- reactive({
 
-        test <- data.frame(Zone = dat_l$Cntnm, Percent = round(cattab()*100, 1), Allocation = round(cattab()*TACset()), TAC = TACset()) #%>% arrange(desc(Percent))
+        test <- data.frame(Zone = dat_l$Cntnm, Percent = round(cattab()*100, 1), Allocation = round(cattab()*TACset()), "Catch_18_20" = round(dat_recent[,2]), TAC = TACset())
 
     })
     
@@ -323,8 +270,6 @@ server <- function(input, output) {
       tactab <- dattab() %>% select(-TAC) %>% arrange(desc(Percent))
       
       tactab <- datatable(tactab, options = list(pageLength = 15, searching = FALSE, dom = "t")) %>% formatStyle(columns = c(2:3), 'text-align' = 'center')
-      
-      #,                                       options=list(pageLength = 15, searching = FALSE, dom = "ltp")
                                        
     })
 

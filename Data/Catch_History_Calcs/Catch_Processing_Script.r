@@ -11,13 +11,13 @@ library(magrittr)
 
   dtl_ln <- dat.l %>% pivot_longer(-year, names_to = "EEZ", values_to = "Catch")
 
-  dat.tab1 <- dtl_ln %>% filter(between(year, 2010, 2019), !EEZ %in% c("HS","NC","PF")) %>% group_by(EEZ) %>% slice_max(order_by = Catch, n = 3) %>%
+  dat.tab1 <- dtl_ln %>% filter(between(year, 2010, 2019), !EEZ %in% c("AS","HS","NC","PF")) %>% group_by(EEZ) %>% slice_max(order_by = Catch, n = 3) %>%
                          group_by(EEZ) %>% summarise(Catch.3.10.19 = mean(Catch)) %>% mutate(Per.3.10.19 = Catch.3.10.19/sum(Catch.3.10.19)*100)
 
-  dat.tab2 <- dtl_ln %>% filter(between(year, 2005, 2019), !EEZ %in% c("HS","NC","PF")) %>% group_by(EEZ) %>% slice_max(order_by = Catch, n = 5) %>%
+  dat.tab2 <- dtl_ln %>% filter(between(year, 2005, 2019), !EEZ %in% c("AS","HS","NC","PF")) %>% group_by(EEZ) %>% slice_max(order_by = Catch, n = 5) %>%
                          group_by(EEZ) %>% summarise(Catch.5.05.19 = mean(Catch)) %>% mutate(Per.5.05.19 = Catch.5.05.19/sum(Catch.5.05.19)*100)
 
-  dat.tab3 <- dtl_ln %>% filter(between(year, 2000, 2019), !EEZ %in% c("HS","NC","PF")) %>% group_by(EEZ) %>% slice_max(order_by = Catch, n = 5) %>%
+  dat.tab3 <- dtl_ln %>% filter(between(year, 2000, 2019), !EEZ %in% c("AS","HS","NC","PF")) %>% group_by(EEZ) %>% slice_max(order_by = Catch, n = 5) %>%
                          group_by(EEZ) %>% summarise(Catch.5.00.19 = mean(Catch)) %>% mutate(Per.5.00.19 = Catch.5.00.19/sum(Catch.5.00.19)*100)
   
 
@@ -26,6 +26,9 @@ library(magrittr)
 
   
   
+  dat.tab.av <- dtl_ln %>% filter(between(year, 2018, 2020), !EEZ %in% c("AS","HS","NC","PF")) %>% group_by(EEZ) %>% summarise(Cat = mean(Catch))
+  write.csv(dat.tab.av, file = paste0(dir.pth, "Catch_Summaries_RecentAvg.csv"), row.names = FALSE)
+  
   
   
   
@@ -33,13 +36,13 @@ library(magrittr)
   
   dtlt_ln <- dat.lt %>% pivot_longer(-year, names_to = "EEZ", values_to = "Catch")
   
-  dat.tab1 <- dtlt_ln %>% filter(between(year, 2010, 2019), !EEZ %in% c("HS","NC","PF")) %>% group_by(EEZ) %>% slice_max(order_by = Catch, n = 3) %>%
+  dat.tab1 <- dtlt_ln %>% filter(between(year, 2010, 2019), !EEZ %in% c("AS","HS","NC","PF")) %>% group_by(EEZ) %>% slice_max(order_by = Catch, n = 3) %>%
                           group_by(EEZ) %>% summarise(Catch.3.10.19 = mean(Catch)) %>% mutate(Per.3.10.19 = Catch.3.10.19/sum(Catch.3.10.19)*100)
   
-  dat.tab2 <- dtlt_ln %>% filter(between(year, 2005, 2019), !EEZ %in% c("HS","NC","PF")) %>% group_by(EEZ) %>% slice_max(order_by = Catch, n = 5) %>%
+  dat.tab2 <- dtlt_ln %>% filter(between(year, 2005, 2019), !EEZ %in% c("AS","HS","NC","PF")) %>% group_by(EEZ) %>% slice_max(order_by = Catch, n = 5) %>%
                           group_by(EEZ) %>% summarise(Catch.5.05.19 = mean(Catch)) %>% mutate(Per.5.05.19 = Catch.5.05.19/sum(Catch.5.05.19)*100)
   
-  dat.tab3 <- dtlt_ln %>% filter(between(year, 2000, 2019), !EEZ %in% c("HS","NC","PF")) %>% group_by(EEZ) %>% slice_max(order_by = Catch, n = 5) %>%
+  dat.tab3 <- dtlt_ln %>% filter(between(year, 2000, 2019), !EEZ %in% c("AS","HS","NC","PF")) %>% group_by(EEZ) %>% slice_max(order_by = Catch, n = 5) %>%
                           group_by(EEZ) %>% summarise(Catch.5.00.19 = mean(Catch)) %>% mutate(Per.5.00.19 = Catch.5.00.19/sum(Catch.5.00.19)*100)
   
   
