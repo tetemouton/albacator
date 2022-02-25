@@ -12,6 +12,8 @@ library(scales)
 library(shinydashboard)
 library(data.table)
 library(DT)
+library(ggthemes)
+library(cowplot)
 
 
 theme_set(theme_bw())
@@ -147,9 +149,11 @@ ui <- fluidPage(
     ),
     
     fluidRow(
-      column(2, br()),
-      column(8,  plotOutput("Barplot"))
-    )
+      column(1, br()),
+      column(4, br(), plotOutput("Barplot")),
+      #column(1, div(style = "height:100px")),
+      column(5, br(), plotOutput("Alloplot"), offset = 2, style='padding-bottom:100px')
+    ),
         
 )
 
@@ -223,11 +227,38 @@ server <- function(input, output) {
       wgt.scalars <- as.numeric(wgtVec())
       
       tmp <- as.matrix(dat[,-c(1,2)])
-      tmp.p <- t(t(tmp)/apply(tmp,2,sum))
+      tmp.p <- t(t(tmp)/apply(tmp,2,sum))   # This probably nicer apply(tmp[-c(1:2)],2,function(x){x/sum(x)})
       tmp.p.w <- t(t(tmp.p)*(wgt.scalars/sum(wgt.scalars)))
       
       tmp.tab <- apply(tmp.p.w, 1, sum)
     
+    })
+    
+    
+    pertab <- reactive({
+      
+      
+      if(input$timeswitch == "1"){
+        
+        dat <- dat_l_00
+        
+      } else {
+        
+        dat <- dat_l
+      }
+      
+      
+      wgt.scalars <- as.numeric(wgtVec())
+      
+      tmp <- as.matrix(dat[,-c(1,2)])
+      tmp.p <- t(t(tmp)/apply(tmp,2,sum))   # This probably nicer apply(tmp[-c(1:2)],2,function(x){x/sum(x)})
+      tmp.p.w <- t(t(tmp.p)*(wgt.scalars/sum(wgt.scalars)))
+      
+      tab <- as.data.frame(tmp.p.w)
+      tab$Cnt <- dat$Cnt
+      
+      all_tab <- tab %>% pivot_longer(cols = -Cnt, names_to = "Criteria", values_to = "Allocation")
+      
     })
     
     
@@ -313,7 +344,28 @@ server <- function(input, output) {
               legend.spacing.x = unit(0.2, "cm"), panel.border = element_blank(), axis.line.x = element_line(size = 0.5, colour = "black"),
               panel.grid.major.y = element_blank(), panel.grid.minor.y = element_blank())
       
-    }, height = 200, width = 1200)
+    }, height = 160, width = 900)
+    
+    
+    output$Alloplot <- renderPlot({
+
+      dat <- pertab()
+
+      pl1 <- ggplot(dat, aes(x = Cnt, y = Allocation, fill = Criteria)) + geom_bar(stat = "identity") +
+                    scale_fill_manual(values = alpha(c("firebrick","burlywood3","dodgerblue","navy","darkorchid"), 0.8)) +
+                    theme_cowplot() + theme(legend.position = "top", plot.margin = unit(c(0, 0, 0, 0), "cm"),
+                                            axis.title.x = element_blank(), axis.text.x = element_blank(), axis.line.x = element_blank())
+      
+      
+      pl2 <- ggplot(dat, aes(x = Cnt, y = Allocation, fill = Criteria)) + geom_bar(stat = "identity", position = "fill") +
+                    scale_fill_manual(values = alpha(c("firebrick","burlywood3","dodgerblue","navy","darkorchid"), 0.8)) +
+                    theme_cowplot() + theme(legend.position = "none", plot.margin = unit(c(0, 0, 0, 0), "cm"),
+                                            axis.title.x = element_blank())
+
+      
+      plot_grid(pl1, pl2, labels = "", ncol = 1)
+
+    }, height = 550, width = 700)
     
     
 }
