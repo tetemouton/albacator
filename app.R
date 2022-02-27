@@ -54,7 +54,7 @@ ui <- fluidPage(
                h3("Choose your scenario"),
                h5(" Tick scenario/s to include and shift slider"),
                h5("to modfify the weightings (%'s). Note that"),
-               h5("values shown are those suggested in paper"),
+               h5("default values are those suggested in paper"),
                br(),
                
                
@@ -121,7 +121,7 @@ ui <- fluidPage(
         h3("Set your options"),
         h5("Choose a total FFA bloc TAC, either a"),
         h5("reference period or a custom value (mt),"),
-        h5("and select whether to include troll catch"),
+        h5("allocated catch is then shown in table"),
         br(),
         
         selectInput("variable", h4("Total bloc:"),
@@ -152,7 +152,7 @@ ui <- fluidPage(
       column(1, br()),
       column(4, br(), plotOutput("Barplot")),
       #column(1, div(style = "height:100px")),
-      column(5, br(), plotOutput("Alloplot"), offset = 2, style='padding-bottom:100px')
+      column(5, br(), plotOutput("Alloplot"), offset = 2, style='padding-bottom:200px')
     ),
         
 )

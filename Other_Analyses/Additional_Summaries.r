@@ -17,7 +17,7 @@ library(cowplot)
 
   zone_cols <- c("dodgerblue2","firebrick3","darkorchid","darkred","lightskyblue","yellow1","orange1","honeydew3","darkgoldenrod3","deeppink3","dodgerblue4","seagreen3","purple4")
 
-  dat_l <- read.csv("C:/GitRep/albacator/Data/DatMat_LL.csv", header = TRUE)
+  dat_l <- read.csv("./Data/DatMat_LL.csv", header = TRUE)
   #dat_l_00 <- read.csv("./Data/DatMat_LL_00.csv", header = TRUE)
 
   TAC <- 1
@@ -60,12 +60,12 @@ library(cowplot)
 
   windows(4000,4000)
     plot_grid(pl1, pl2, labels = "", ncol = 1)
-    savePlot("C:/GitRep/albacator/Other_Analyses/Allocation_Breakdown_RecentCatches.png", type="png")
+    savePlot("./Other_Analyses/Allocation_Breakdown_RecentCatches.png", type="png")
   dev.off()
 
 
 
-  dat_l <- read.csv("C:/GitRep/albacator/Data/DatMat_LL_00.csv", header = TRUE)
+  dat_l <- read.csv("./Data/DatMat_LL_00.csv", header = TRUE)
   #dat_l_00 <- read.csv("./Data/DatMat_LL_00.csv", header = TRUE)
   
   TAC <- 1
@@ -108,7 +108,7 @@ library(cowplot)
   
   windows(4000,4000)
     plot_grid(pl1, pl2, labels = "", ncol = 1)
-    savePlot("C:/GitRep/albacator/Other_Analyses/Allocation_Breakdown_EarlyCatches.png", type="png")
+    savePlot("./Other_Analyses/Allocation_Breakdown_EarlyCatches.png", type="png")
   dev.off()
 
 
