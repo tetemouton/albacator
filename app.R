@@ -23,6 +23,7 @@ zone_cols <- c("dodgerblue2","firebrick3","darkorchid","darkred","lightskyblue",
 dat_l <- read.csv("./Data/DatMat_LL.csv", header = TRUE)
 dat_l_00 <- read.csv("./Data/DatMat_LL_00.csv", header = TRUE)
 
+# Comment out troll catch files - not needed at this stage
 #dat_t <- read.csv("./Data/DatMat_LLTR.csv", header = TRUE)
 #dat_t_00 <- read.csv("./Data/DatMat_LLTR_00.csv", header = TRUE)
 
